@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const connectDB = require("./config/database.config");
+const connectToCloudinary = require("./config/cloudinary.config");
 
 require("dotenv").config();
 
@@ -8,6 +9,8 @@ const PORT = process.env.PORT || 3000;
 
 // coneect to the database
 connectDB();
+// coneect to the cloudinary
+connectToCloudinary();
 
 // middlewares
 app.use(express.json());
