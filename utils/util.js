@@ -9,3 +9,13 @@ exports.sendMailToUser = (to, subject, html) => {
     html,
   });
 };
+
+exports.generateCookie = (res, token) => {
+  res.cookie("token", token, {
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+  return;
+};

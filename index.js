@@ -14,11 +14,10 @@ connectDB();
 connectToCloudinary();
 
 // middlewares
-app.use("/api/v1");
 app.use(express.json());
 
 // routes
-app.use("/auth", userRoutes);
+app.use("/api/v1/auth", userRoutes);
 
 // default route
 app.get("/", (req, res) => {

@@ -11,7 +11,7 @@ exports.isAuth = async (req, res, next) => {
 
     // validdate the token
     if (!token) {
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
         message: "Cookie not found",
       });
@@ -19,16 +19,13 @@ exports.isAuth = async (req, res, next) => {
 
     // verify the token using jwt
     try {
-      const { id, email, role } = await jwt.verify(
-        token,
-        process.env.JWT_SECRET
-      );
+      const { id, email, role } = jwt.verify(token, process.env.JWT_SECRET);
 
       // check if that user exits in the database
       const doesExist = await User.findById(id);
 
       if (!doesExist) {
-        return res.status(400).json({
+        return res.status(401).json({
           success: false,
           message: "Invalid token",
         });
@@ -45,7 +42,7 @@ exports.isAuth = async (req, res, next) => {
       next();
     } catch (error) {
       console.log("Error while verifying the token: ", error.message);
-      return res.status(400).json({
+      return res.status(401).json({
         success: false,
         message: "Token expired",
       });
