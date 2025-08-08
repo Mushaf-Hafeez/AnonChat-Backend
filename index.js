@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const connectDB = require("./config/database.config");
 const connectToCloudinary = require("./config/cloudinary.config");
+const userRoutes = require("./routes/user.route");
 
 require("dotenv").config();
 
@@ -13,7 +14,11 @@ connectDB();
 connectToCloudinary();
 
 // middlewares
+app.use("/api/v1");
 app.use(express.json());
+
+// routes
+app.use("/auth", userRoutes);
 
 // default route
 app.get("/", (req, res) => {
