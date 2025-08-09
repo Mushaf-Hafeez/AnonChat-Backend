@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+
+const cookieParser = require("cookie-parser");
+
 const connectDB = require("./config/database.config");
 const connectToCloudinary = require("./config/cloudinary.config");
 const userRoutes = require("./routes/user.route");
@@ -15,6 +18,7 @@ connectToCloudinary();
 
 // middlewares
 app.use(express.json());
+app.use(cookieParser());
 
 // routes
 app.use("/api/v1/auth", userRoutes);

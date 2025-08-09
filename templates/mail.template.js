@@ -140,3 +140,87 @@ exports.generateAnonChatWelcomeEmail = (username) => {
     </html>
   `;
 };
+
+exports.generateAnonChatResetPasswordEmail = (resetLink) => {
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>Reset Your Password - AnonChat</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          padding: 0;
+          margin: 0;
+        }
+        .container {
+          max-width: 600px;
+          margin: 40px auto;
+          background-color: #ffffff;
+          padding: 30px;
+          border-radius: 8px;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .header h1 {
+          margin: 0;
+          color: #09090b;
+        }
+        .content {
+          font-size: 16px;
+          line-height: 1.6;
+        }
+        .btn {
+          display: inline-block;
+          background-color: #09090b;
+          color: white !important;
+          padding: 12px 24px;
+          font-size: 16px;
+          font-weight: bold;
+          text-decoration: none;
+          border-radius: 6px;
+          margin: 20px 0;
+        }
+        .note {
+          color: #991b1b;
+          font-size: 14px;
+          margin-top: 10px;
+        }
+        .footer {
+          margin-top: 30px;
+          font-size: 14px;
+          color: #777;
+          text-align: center;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Password Reset Request</h1>
+        </div>
+        <div class="content">
+          <p>Hello,</p>
+          <p>We received a request to reset your password for your <strong>AnonChat</strong> account.</p>
+          <p>Click the button below to reset your password. This link will expire in <strong>5 minutes</strong>.</p>
+          <p style="text-align:center;">
+            <a href="${resetLink}" class="btn">Reset Password</a>
+          </p>
+          <p>If you didn't request this, you can safely ignore this email.</p>
+          <p class="note">⚠️ For security reasons, do not share this link with anyone.</p>
+        </div>
+        <div class="footer">
+          &copy; ${new Date().getFullYear()} AnonChat. All rights reserved.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
