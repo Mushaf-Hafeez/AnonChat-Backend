@@ -459,3 +459,37 @@ exports.logout = async (req, res) => {
     });
   }
 };
+
+// checkAuth controller function
+exports.checkAuth = async (req, res) => {
+  // get the user id from the req.user
+  const { id } = req.user;
+
+  try {
+    // get the user data from the database
+    const user = await User.findById(id).select(
+      "-resetPasswordToken -resetPasswordTokenExpiresIn -password"
+    );
+
+    // retrurn if no user found in the database
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No user found",
+      });
+    }
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      user,
+      message: "User is authenticated",
+    });
+  } catch (error) {
+    console.log("Error in the check auth controller function: ", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
