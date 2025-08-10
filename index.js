@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const connectDB = require("./config/database.config");
 const connectToCloudinary = require("./config/cloudinary.config");
 const userRoutes = require("./routes/user.route");
+const adminRoutes = require("./routes/admin.route");
 
 require("dotenv").config();
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 
 // routes
 app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 // default route
 app.get("/", (req, res) => {

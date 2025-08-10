@@ -1,5 +1,6 @@
 // models
 const User = require("../models/user.model");
+const Admin = require("../models/admin.model");
 const OTP = require("../models/otp.model");
 
 // packages
@@ -100,7 +101,7 @@ exports.signup = async (req, res) => {
     rollno,
     password,
     confirmPassword,
-    role,
+    // role,
     section,
     semester,
     otp,
@@ -114,7 +115,7 @@ exports.signup = async (req, res) => {
       !rollno ||
       !password ||
       !confirmPassword ||
-      !role ||
+      // !role ||
       !section ||
       !semester
     ) {
@@ -178,6 +179,10 @@ exports.signup = async (req, res) => {
         message: "Error while hashing the password",
       });
     }
+
+    // find the user role from admin's database
+    const adminDOC = await Admin.findOne({ rollno }).select("-_id -rollno");
+    const role = adminDOC.role || "STUDENT";
 
     // create the user account in the database
     const user = await User.create({
@@ -262,7 +267,7 @@ exports.login = async (req, res) => {
     // }
 
     // return if the user does not exists in the database
-    const doesExist = await User.findOne({ email }).lean();
+    let doesExist = await User.findOne({ email });
 
     if (!doesExist) {
       return res.status(404).json({
@@ -279,6 +284,7 @@ exports.login = async (req, res) => {
       });
     }
 
+    doesExist = doesExist.toObject();
     delete doesExist.password;
 
     const payload = {
@@ -296,6 +302,7 @@ exports.login = async (req, res) => {
     // return with success response
     return res.status(200).json({
       success: true,
+      user: doesExist,
       message: "User logged in",
     });
   } catch (error) {
