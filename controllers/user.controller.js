@@ -202,6 +202,8 @@ exports.signup = async (req, res) => {
       id: user._id,
       email: user.email,
       role: user.role,
+      section: user.section,
+      semester: user.semester,
     };
 
     // generate token and cookie
@@ -291,6 +293,8 @@ exports.login = async (req, res) => {
       id: doesExist._id,
       email: doesExist.email,
       role: doesExist.role,
+      section: doesExist.section,
+      semester: doesExist.semester,
     };
 
     // generate a token

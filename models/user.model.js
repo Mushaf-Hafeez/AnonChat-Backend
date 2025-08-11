@@ -43,6 +43,18 @@ const userSchema = new mongoose.Schema(
     resetPasswordTokenExpiresIn: {
       type: Date,
     },
+    myGroups: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Group",
+      },
+    ],
+    joinedGroups: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Group",
+      },
+    ],
   },
   { timestamps: true }
 );

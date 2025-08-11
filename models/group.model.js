@@ -32,7 +32,6 @@ const groupSchema = new mongoose.Schema(
     },
     isActive: {
       type: Boolean,
-      required: true,
       default: true,
     },
   },

@@ -13,13 +13,16 @@ exports.isAuth = async (req, res, next) => {
     if (!token) {
       return res.status(400).json({
         success: false,
-        message: "Cookie not found",
+        message: "Please login",
       });
     }
 
     // verify the token using jwt
     try {
-      const { id, email, role } = jwt.verify(token, process.env.JWT_SECRET);
+      const { id, email, role, section, semester } = jwt.verify(
+        token,
+        process.env.JWT_SECRET
+      );
 
       // check if that user exits in the database
       const doesExist = await User.findById(id);
@@ -36,6 +39,8 @@ exports.isAuth = async (req, res, next) => {
         id,
         email,
         role,
+        section,
+        semester,
       };
 
       // send req to the next
