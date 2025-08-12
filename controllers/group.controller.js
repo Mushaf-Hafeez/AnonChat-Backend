@@ -35,12 +35,16 @@ exports.createGroup = async (req, res) => {
       });
     }
 
+    // fetch the users from the database with section and semester
+    const members = await User.find({ section, semester }).select("_id");
+
     // create a group and add the id in the admin's document
     const group = await Group.create({
       groupName,
       description,
       section,
       semester,
+      members,
       createdBy: req.user.id,
     });
 
@@ -201,6 +205,141 @@ exports.deleteGroup = async (req, res) => {
   } catch (error) {
     console.log(
       "Error in the delete group controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+// addMember controller function
+exports.addMember = async (req, res) => {
+  // get the group ID from the req params
+  const { id } = req.params;
+
+  // get the userIds from the req body
+  const { userIds } = req.body;
+
+  try {
+    // validation
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Group ID is required",
+      });
+    }
+
+    // validate the userIds
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "User IDs are required",
+      });
+    }
+
+    // return if no group exists in the database
+    const doesExist = await Group.findById(id);
+
+    if (!doesExist) {
+      return res.status(404).json({
+        success: false,
+        message: "No group found",
+      });
+    }
+
+    // add userIds in the group => members
+    const updatedGroup = await Group.findByIdAndUpdate(
+      id,
+      { $addToSet: { members: { $each: userIds } } },
+      { new: true }
+    );
+
+    // add the group ID in each user => joinedGroups
+    await User.updateMany(
+      { _id: { $in: userIds } },
+      { $addToSet: { joinedGroups: id } }
+    );
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      group: updatedGroup,
+      message: "added successfully",
+    });
+  } catch (error) {
+    console.log("Error in the add member controller function: ", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+// removeMember controller function
+exports.removeMember = async (req, res) => {
+  // get the group ID from req param
+  const { id } = req.params;
+
+  // get the user id from the req body
+  const { userId } = req.body;
+
+  try {
+    // validation
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Group ID is required",
+      });
+    }
+
+    // validate user id
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
+
+    // return if no group exists
+    const doesExist = await Group.findById(id);
+
+    if (!doesExist) {
+      return res.status(404).json({
+        success: false,
+        message: "No group found",
+      });
+    }
+
+    // return if no user found
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No user found",
+      });
+    }
+
+    // remove the user from the group => members
+    const updatedGroup = await Group.findByIdAndUpdate(
+      id,
+      { $pull: { members: userId } },
+      { new: true }
+    );
+
+    // remove the group ID from the user's -> joinedGroups
+    await User.findByIdAndUpdate(userId, { $pull: { joinedGroups: id } });
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      message: "Removed successfully",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the remove member controller function: ",
       error.message
     );
     return res.status(500).json({
