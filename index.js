@@ -8,7 +8,8 @@ const connectDB = require("./config/database.config");
 const connectToCloudinary = require("./config/cloudinary.config");
 const userRoutes = require("./routes/user.route");
 const adminRoutes = require("./routes/admin.route");
-const groupRoute = require("./routes/group.route");
+const groupRoutes = require("./routes/group.route");
+const deptRoutes = require("./routes/department.route");
 
 require("dotenv").config();
 
@@ -35,7 +36,8 @@ app.use(
 // routes
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/admin", adminRoutes);
-app.use("/api/v1/group", groupRoute);
+app.use("/api/v1/group", groupRoutes);
+app.use("/api/v1/dept", deptRoutes);
 
 // default route
 app.get("/", (req, res) => {
