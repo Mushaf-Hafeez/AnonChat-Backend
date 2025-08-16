@@ -5,8 +5,12 @@ const deptRoutes = express.Router();
 const { isAuth, isAdmin } = require("../middlewares/auth.middleware");
 
 // import controller functions
-const { createDepartment } = require("../controllers/department.controller");
+const {
+  createDepartment,
+  getDepartments,
+} = require("../controllers/department.controller");
 
 deptRoutes.post("/create", isAuth, createDepartment);
+deptRoutes.get("/departments", getDepartments);
 
 module.exports = deptRoutes;

@@ -44,3 +44,30 @@ exports.createDepartment = async (req, res) => {
     });
   }
 };
+
+// getDepartments controller function
+exports.getDepartments = async (req, res) => {
+  try {
+    // get departments from the database
+    const departments = await Department.find();
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      departments,
+      message:
+        departments.length > 0
+          ? "Department get successfully"
+          : "No department found",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the get departments controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
