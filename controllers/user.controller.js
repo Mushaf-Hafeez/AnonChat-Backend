@@ -282,7 +282,7 @@ exports.login = async (req, res) => {
     if (!(await bcrypt.compare(password, doesExist.password))) {
       return res.status(400).json({
         success: false,
-        messag: "Invalid credentials",
+        message: "Invalid credentials",
       });
     }
 
@@ -358,7 +358,7 @@ exports.forgotPassword = async (req, res) => {
     // generate a link to reset the password
     const resetPasswordToken = crypto.randomUUID();
     const resetPasswordLink =
-      process.env.FRONTEND_URL + "/" + resetPasswordToken;
+      process.env.FRONTEND_URL + "/reset-password/" + resetPasswordToken;
 
     // store the link and the expiration time in the database
     doesExist.resetPasswordToken = resetPasswordToken;

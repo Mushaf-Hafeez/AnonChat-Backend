@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const connectDB = require("./config/database.config");
 const connectToCloudinary = require("./config/cloudinary.config");
@@ -21,6 +22,15 @@ connectToCloudinary();
 // middlewares
 app.use(express.json());
 app.use(cookieParser());
+
+// cors
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
 // routes
 app.use("/api/v1/auth", userRoutes);
