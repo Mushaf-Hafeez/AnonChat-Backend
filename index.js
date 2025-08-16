@@ -10,6 +10,7 @@ const userRoutes = require("./routes/user.route");
 const adminRoutes = require("./routes/admin.route");
 const groupRoutes = require("./routes/group.route");
 const deptRoutes = require("./routes/department.route");
+const sectionRoutes = require("./routes/section.route");
 
 require("dotenv").config();
 
@@ -37,7 +38,8 @@ app.use(
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/group", groupRoutes);
-app.use("/api/v1/dept", deptRoutes);
+app.use("/api/v1/department", deptRoutes);
+app.use("/api/v1/section", sectionRoutes);
 
 // default route
 app.get("/", (req, res) => {

@@ -7,6 +7,6 @@ const { isAuth, isAdmin } = require("../middlewares/auth.middleware");
 // import controller functions
 const { createDepartment } = require("../controllers/department.controller");
 
-deptRoutes.post("/create", isAuth, isAdmin, createDepartment);
+deptRoutes.post("/create", isAuth, createDepartment);
 
 module.exports = deptRoutes;

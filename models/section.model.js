@@ -1,18 +1,24 @@
-const mogoose = require("mogoose");
+const mongoose = require("mongoose");
 
 const sectionSchema = new mongoose.Schema(
   {
     department: {
-      name: mogoose.Schema.Types.ObjectId,
-      ref: "Department",
+      type: String,
+      required: true,
     },
     semester: {
-      name: Number,
+      type: String,
+      required: true,
+    },
+    session: {
+      type: String,
+      enum: ["SPRING", "FALL"],
       required: true,
     },
     sections: [
       {
         type: String,
+        required: true,
       },
     ],
   },
