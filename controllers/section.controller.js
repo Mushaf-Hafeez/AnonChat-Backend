@@ -106,3 +106,49 @@ exports.addSection = async (req, res) => {
     });
   }
 };
+
+// get sections controller function
+exports.getSections = async (req, res) => {
+  // get the dept code and semester from the req body
+  const { department, semester, session } = req.body;
+
+  try {
+    // validation
+    if (!department || !semester || !session) {
+      return res.status(400).json({
+        success: false,
+        message: "Please seleect Department, Semester and Session",
+      });
+    }
+
+    // find the sections from the database
+    const sections = await Section.find({
+      department,
+      semester,
+      session: session.toUpperCase(),
+    });
+
+    if (!sections) {
+      return res.status(404).json({
+        success: false,
+        message: "Sections not found",
+      });
+    }
+
+    // return success response
+    return res.status(200).json({
+      success: true,
+      sections,
+      message: "Sections fetched",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the get sections controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
