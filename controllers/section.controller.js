@@ -110,7 +110,7 @@ exports.addSection = async (req, res) => {
 // get sections controller function
 exports.getSections = async (req, res) => {
   // get the dept code and semester from the req body
-  const { department, semester, session } = req.body;
+  const { department, semester, session } = req.query;
 
   try {
     // validation
