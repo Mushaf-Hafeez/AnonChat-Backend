@@ -75,7 +75,7 @@ exports.sendOTP = async (req, res) => {
     await OTP.create({
       email,
       otp,
-      expiresIn: Date.now() + 5 * 60 * 1000,
+      expiresIn: new Date(Date.now() + 5 * 60 * 1000),
     });
 
     // return the success response
@@ -115,13 +115,19 @@ exports.signup = async (req, res) => {
       !rollno ||
       !password ||
       !confirmPassword ||
-      // !role ||
       !section ||
       !semester
     ) {
       return res.status(400).json({
         success: false,
         message: "All the fields are required",
+      });
+    }
+
+    if (!otp) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP is required",
       });
     }
 
@@ -144,7 +150,7 @@ exports.signup = async (req, res) => {
     if (doesExist) {
       return res.status(400).json({
         success: false,
-        messag: "User already registered",
+        message: "User already registered",
       });
     }
 
@@ -152,8 +158,8 @@ exports.signup = async (req, res) => {
     const isVerified = await OTP.findOne({
       email,
       otp,
-      expiresIn: { $gt: Date.now() },
-    });
+      expiresIn: { $gt: new Date() },
+    }).sort({ createdAt: -1 });
 
     if (!isVerified) {
       return res.status(400).json({
@@ -182,10 +188,14 @@ exports.signup = async (req, res) => {
 
     // find the user role from admin's database
     const adminDOC = await Admin.findOne({ rollno }).select("-_id -rollno");
-    const role = adminDOC.role || "STUDENT";
+    let role = "STUDENT";
+
+    if (adminDOC && adminDOC.role) {
+      role = adminDOC.role;
+    }
 
     // create the user account in the database
-    const user = await User.create({
+    let user = await User.create({
       name,
       email,
       rollno,
@@ -194,6 +204,9 @@ exports.signup = async (req, res) => {
       section,
       semester,
     });
+
+    user = user.toObject();
+    delete user.password;
 
     // delete all the OTPs with this email
     await OTP.deleteMany({ email });
@@ -213,7 +226,7 @@ exports.signup = async (req, res) => {
     if (!token) {
       return res.status(500).json({
         success: false,
-        messag: "Error while creating a token",
+        message: "Error while creating a token",
       });
     }
 
@@ -230,6 +243,7 @@ exports.signup = async (req, res) => {
     // return success response
     return res.status(201).json({
       success: true,
+      user,
       message: "Account created",
     });
   } catch (error) {
@@ -274,7 +288,7 @@ exports.login = async (req, res) => {
     if (!doesExist) {
       return res.status(404).json({
         success: false,
-        messag: "Signup before logging in",
+        message: "Signup before logging in",
       });
     }
 
