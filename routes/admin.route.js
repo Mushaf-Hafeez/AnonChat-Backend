@@ -1,10 +1,18 @@
 const express = require("express");
 const adminRoutes = express.Router();
 
-// import controller functions
-const { addAdmin, removeAdmin } = require("../controllers/admin.controller");
+// importing middleware functions
+const { isAuth, isSuperAdmin } = require("../middlewares/auth.middleware");
 
-adminRoutes.post("/add", addAdmin);
-adminRoutes.delete("/remove/:id", removeAdmin);
+// import controller functions
+const {
+  adminLogin,
+  addAdmin,
+  removeAdmin,
+} = require("../controllers/admin.controller");
+
+adminRoutes.post("/admin-login", adminLogin);
+adminRoutes.post("/add", isAuth, isSuperAdmin, addAdmin);
+adminRoutes.delete("/remove/:id", isAuth, isSuperAdmin, removeAdmin);
 
 module.exports = adminRoutes;

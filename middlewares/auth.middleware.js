@@ -19,10 +19,7 @@ exports.isAuth = async (req, res, next) => {
 
     // verify the token using jwt
     try {
-      const { id, email, role, section, semester } = jwt.verify(
-        token,
-        process.env.JWT_SECRET
-      );
+      const decode = jwt.verify(token, process.env.JWT_SECRET);
 
       // check if that user exits in the database
       const doesExist = await User.findById(id);
@@ -35,13 +32,20 @@ exports.isAuth = async (req, res, next) => {
       }
 
       // add the user data id, role and email into the req
-      req.user = {
-        id,
-        email,
-        role,
-        section,
-        semester,
-      };
+      if (doesExist.role === "SUPER_ADMIN") {
+        req.user = {
+          id: decode.id,
+          role: decode.role,
+        };
+      } else {
+        req.user = {
+          id: decode.id,
+          email: decode.email,
+          role: decode.role,
+          section: decode.section,
+          semester: decode.semester,
+        };
+      }
 
       // send req to the next
       next();
@@ -76,14 +80,14 @@ exports.isGroupAdmin = (req, res, next) => {
 };
 
 // middleware to check if the role is ADMIN
-exports.isAdmin = (req, res, next) => {
-  if (req.user.role !== "ADMIN") {
+exports.isSuperAdmin = (req, res, next) => {
+  if (req.user.role !== "SUPER_ADMIN") {
     return res.status(401).json({
       success: false,
-      message: "This is protected route only for the ADMIN",
+      message: "This is protected route only for the SUPER ADMIN",
     });
   } else {
-    console.log("welcome to the CR/GR route");
+    console.log("welcome to the SUPER ADMIN route");
     next();
   }
 };
