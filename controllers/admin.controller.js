@@ -10,11 +10,11 @@ const { generateCookie } = require("../utils/util");
 // adminLogin controller function
 exports.adminLogin = async (req, res) => {
   // get the username and password from the req.body
-  const { name, password } = req.body;
+  const { username, password } = req.body;
 
   try {
     // validation
-    if (!name || !password) {
+    if (!username || !password) {
       return res.status(400).json({
         success: false,
         message: "username/password is required",
@@ -22,7 +22,7 @@ exports.adminLogin = async (req, res) => {
     }
 
     // check if user exist with this name
-    const doesExist = await User.findOne({ name });
+    const doesExist = await User.findOne({ name: username }).lean();
 
     // return if no user found
     if (!doesExist) {
@@ -39,6 +39,8 @@ exports.adminLogin = async (req, res) => {
         message: "Incorrect credentials",
       });
     }
+
+    delete doesExist.password;
 
     const payload = {
       id: doesExist._id,

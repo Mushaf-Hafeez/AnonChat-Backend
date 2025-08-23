@@ -22,7 +22,7 @@ exports.isAuth = async (req, res, next) => {
       const decode = jwt.verify(token, process.env.JWT_SECRET);
 
       // check if that user exits in the database
-      const doesExist = await User.findById(id);
+      const doesExist = await User.findById(decode.id);
 
       if (!doesExist) {
         return res.status(401).json({
