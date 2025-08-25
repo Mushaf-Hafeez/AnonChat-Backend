@@ -74,7 +74,7 @@ exports.isGroupAdmin = (req, res, next) => {
       message: "This is protected route only for the group admins",
     });
   } else {
-    console.log("welcome to the CR/GR route");
+    // console.log("welcome to the CR/GR route");
     next();
   }
 };
@@ -87,7 +87,7 @@ exports.isSuperAdmin = (req, res, next) => {
       message: "This is protected route only for the SUPER ADMIN",
     });
   } else {
-    console.log("welcome to the SUPER ADMIN route");
+    // console.log("welcome to the SUPER ADMIN route");
     next();
   }
 };

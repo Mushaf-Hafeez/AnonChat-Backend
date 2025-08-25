@@ -15,7 +15,7 @@ exports.createDepartment = async (req, res) => {
     }
 
     // return if another department exists with this code
-    const doesExist = await Department.findOne({ code });
+    const doesExist = await Department.findOne({ code, name });
 
     if (doesExist) {
       return res.status(400).json({
@@ -63,6 +63,40 @@ exports.getDepartments = async (req, res) => {
   } catch (error) {
     console.log(
       "Error in the get departments controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+// deleteDepartment controller functin
+exports.deleteDepartment = async (req, res) => {
+  // get the id from the params
+  const { id } = req.params;
+
+  try {
+    // validation
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide the ID",
+      });
+    }
+
+    // delete the department
+    await Department.findByIdAndDelete(id);
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      message: "Department deleted",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the delete department controller function: ",
       error.message
     );
     return res.status(500).json({
