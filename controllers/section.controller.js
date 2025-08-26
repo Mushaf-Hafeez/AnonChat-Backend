@@ -4,17 +4,11 @@ const Section = require("../models/section.model");
 // create section controller function
 exports.createSection = async (req, res) => {
   // get the Department, semester and sections from the req body
-  const { departmentCode, semester, session, sections } = req.body;
+  const { department, semester, session, section } = req.body;
 
   try {
     // validation
-    if (
-      !departmentCode ||
-      !semester ||
-      !sections ||
-      !session ||
-      sections.length === 0
-    ) {
+    if (!department || !semester || !section || !session) {
       return res.status(400).json({
         success: false,
         message: "All the fields are required",
@@ -22,7 +16,7 @@ exports.createSection = async (req, res) => {
     }
 
     // return if no department found with the name
-    const doesExist = await Department.findOne({ code: departmentCode });
+    const doesExist = await Department.findOne({ name: department });
 
     if (!doesExist) {
       return res.status(404).json({
@@ -31,73 +25,53 @@ exports.createSection = async (req, res) => {
       });
     }
 
-    // create the section
-    const section = await Section.create({
-      department: departmentCode,
+    // return if section already exists in the database
+    const doesSectionExist = await Section.findOne({
+      department,
       semester,
       session: session.toUpperCase(),
-      sections,
+    });
+
+    // if exists then update it and return the success response
+    if (doesSectionExist) {
+      const sectionIndex = doesSectionExist.sections.findIndex(
+        (item) => item === section
+      );
+
+      if (sectionIndex === -1) {
+        doesSectionExist.sections.push(section);
+        await doesSectionExist.save();
+
+        return res.status(201).json({
+          success: true,
+          section: doesSectionExist,
+          message: "Section added",
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "Already exists",
+        });
+      }
+    }
+
+    // create the section and send the success response
+    const createdSection = await Section.create({
+      department,
+      semester,
+      session: session.toUpperCase(),
+      sections: section,
     });
 
     // return the success response
     return res.status(201).json({
       success: true,
-      section,
+      section: createdSection,
       message: "Section created",
     });
   } catch (error) {
     console.log(
       "Error in the create section controller function: ",
-      error.message
-    );
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-};
-
-// add sections controller function
-exports.addSection = async (req, res) => {
-  // get the section id from the req params
-  const { id } = req.params;
-  const { sections } = req.body;
-
-  try {
-    // validation
-    if (!id || !sections) {
-      return res.status(400).json({
-        success: false,
-        message: "All the fields are required",
-      });
-    }
-
-    // return if no section found with id
-    const doesExist = await Section.findById(id);
-
-    if (!doesExist) {
-      return res.status(404).json({
-        success: false,
-        message: "No section found",
-      });
-    }
-
-    // push the sections into the section
-    const section = await Section.findByIdAndUpdate(
-      id,
-      { $push: { sections } },
-      { new: true }
-    );
-
-    // return the success response
-    return res.status(200).json({
-      success: true,
-      section,
-      message: "Sections added",
-    });
-  } catch (error) {
-    console.log(
-      "Error in the add section controller function: ",
       error.message
     );
     return res.status(500).json({
@@ -117,7 +91,7 @@ exports.getSections = async (req, res) => {
     if (!department || !semester || !session) {
       return res.status(400).json({
         success: false,
-        message: "Please seleect Department, Semester and Session",
+        message: "Please select Department, Semester and Session",
       });
     }
 
