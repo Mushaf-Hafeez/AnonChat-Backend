@@ -101,8 +101,6 @@ exports.deleteSection = async (req, res) => {
       { new: true }
     );
 
-    console.log("updated section: ", updatedSection);
-
     // return the success response
     return res.status(200).json({
       success: true,
