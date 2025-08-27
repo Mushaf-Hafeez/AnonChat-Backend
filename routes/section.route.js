@@ -7,10 +7,12 @@ const { isAuth, isSuperAdmin } = require("../middlewares/auth.middleware");
 // importing controllers
 const {
   createSection,
+  deleteSection,
   getSections,
 } = require("../controllers/section.controller");
 
 sectionRoutes.post("/create", isAuth, isSuperAdmin, createSection);
+sectionRoutes.delete("/delete", isAuth, isSuperAdmin, deleteSection);
 sectionRoutes.get("/sections", getSections);
 
 module.exports = sectionRoutes;

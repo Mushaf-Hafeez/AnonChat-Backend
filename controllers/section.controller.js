@@ -81,6 +81,46 @@ exports.createSection = async (req, res) => {
   }
 };
 
+// delete section controller function
+exports.deleteSection = async (req, res) => {
+  // get the department, semester, session and sectoin  from the req.body
+  const { department, semester, session, section } = req.body;
+
+  try {
+    // validation
+    if (!department || !semester || !session || !section) {
+      return res.status(400).json({
+        success: false,
+        message: "All the fields are required",
+      });
+    }
+
+    const updatedSection = await Section.findOneAndUpdate(
+      { department, semester, session: session.toUpperCase() },
+      { $pull: { sections: section } },
+      { new: true }
+    );
+
+    console.log("updated section: ", updatedSection);
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      updatedSection,
+      message: "Section deleted successfully",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the delete section controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 // get sections controller function
 exports.getSections = async (req, res) => {
   // get the dept code and semester from the req body
