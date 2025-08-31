@@ -73,6 +73,26 @@ exports.adminLogin = async (req, res) => {
   }
 };
 
+// getAdmins controller function
+exports.getAdmins = async (req, res) => {
+  try {
+    const admins = await Admin.find();
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      admins,
+      message: "Admins fetched successfully",
+    });
+  } catch (error) {
+    console.log("Error in the get admins controller function: ", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 // addAdmin controller function
 exports.addAdmin = async (req, res) => {
   // get the roll from the req body
@@ -144,7 +164,7 @@ exports.removeAdmin = async (req, res) => {
 
     // return the success response
     return res.status(200).json({
-      success: false,
+      success: true,
       message: "Admin removed",
     });
   } catch (error) {
