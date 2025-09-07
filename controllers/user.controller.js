@@ -283,7 +283,7 @@ exports.login = async (req, res) => {
     // }
 
     // return if the user does not exists in the database
-    let doesExist = await User.findOne({ email });
+    let doesExist = await User.findOne({ email }).populate("joinedGroups");
 
     if (!doesExist) {
       return res.status(404).json({
@@ -492,9 +492,9 @@ exports.checkAuth = async (req, res) => {
 
   try {
     // get the user data from the database
-    const user = await User.findById(id).select(
-      "-resetPasswordToken -resetPasswordTokenExpiresIn -password"
-    );
+    const user = await User.findById(id)
+      .select("-resetPasswordToken -resetPasswordTokenExpiresIn -password")
+      .populate("joinedGroups");
 
     // retrurn if no user found in the database
     if (!user) {
