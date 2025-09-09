@@ -348,3 +348,45 @@ exports.removeMember = async (req, res) => {
     });
   }
 };
+
+// getGroupDetails controller function
+exports.getGroupDetails = async (req, res) => {
+  // get the ID from the params
+  const { id } = req.params;
+
+  try {
+    // validation
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "ID is missing",
+      });
+    }
+
+    // return if no gorup found with this ID in the database
+    const groupData = await Group.findById(id).populate("members").exec();
+
+    if (!groupData) {
+      return res.status(404).json({
+        success: false,
+        message: "No group found",
+      });
+    }
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      groupData,
+      message: "Group data fetched successfully",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the get group details controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
