@@ -423,12 +423,8 @@ exports.leaveGroup = async (req, res) => {
     // return the success response
     return res.status(200).json({
       success: true,
-      updatedUser,
-      updatedGroup,
       message: "Group leaved successfully",
     });
-
-    return res;
   } catch (error) {
     console.log(
       "Error in the leave group controller function: ",
