@@ -390,3 +390,53 @@ exports.getGroupDetails = async (req, res) => {
     });
   }
 };
+
+// leaveGroup controller function
+exports.leaveGroup = async (req, res) => {
+  // get the group ID from the req.params
+  const groupID = req.params.id;
+  const userID = req.user.id;
+
+  try {
+    // validation
+    if (!groupID) {
+      return res.status(400).json({
+        success: false,
+        message: "Group ID not found",
+      });
+    }
+
+    // remove the member from the member of that group in the database
+    const updatedGroup = await Group.findByIdAndUpdate(
+      groupID,
+      { $pull: { members: userID } },
+      { new: true }
+    );
+
+    // now remove the groupID from the user's.joinedGroups
+    const updatedUser = await User.findByIdAndUpdate(
+      userID,
+      { $pull: { joinedGroups: groupID } },
+      { new: true }
+    );
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      updatedUser,
+      updatedGroup,
+      message: "Group leaved successfully",
+    });
+
+    return res;
+  } catch (error) {
+    console.log(
+      "Error in the leave group controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};

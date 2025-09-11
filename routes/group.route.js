@@ -12,6 +12,7 @@ const {
   deleteGroup,
   addMember,
   removeMember,
+  leaveGroup,
 } = require("../controllers/group.controller");
 
 groupRoutes.get("/details/:id", isAuth, getGroupDetails);
@@ -20,5 +21,6 @@ groupRoutes.put("/update/:id", isAuth, isGroupAdmin, updateGroup);
 groupRoutes.delete("/delete/:id", isAuth, isGroupAdmin, deleteGroup);
 groupRoutes.put("/add/:id", isAuth, isGroupAdmin, addMember);
 groupRoutes.delete("/remove/:id", isAuth, isGroupAdmin, removeMember);
+groupRoutes.delete("/leave/:id", isAuth, leaveGroup);
 
 module.exports = groupRoutes;
