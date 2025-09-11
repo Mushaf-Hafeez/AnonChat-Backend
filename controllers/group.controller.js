@@ -282,8 +282,8 @@ exports.removeMember = async (req, res) => {
   // get the group ID from req param
   const { id } = req.params;
 
-  // get the user id from the req body
-  const { userId } = req.body;
+  // get the user id from the req query
+  const { userId } = req.query;
 
   try {
     // validation
