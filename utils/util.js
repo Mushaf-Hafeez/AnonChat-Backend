@@ -1,4 +1,5 @@
 const transporter = require("../config/nodemailer.config");
+const cloudinary = require("cloudinary").v2;
 require("dotenv").config();
 
 // function to send the email
@@ -25,4 +26,14 @@ exports.generateCookie = (res, token) => {
 // function to check if the email is valid or not
 exports.isValidEmail = (email) => {
   return email.endsWith("@iub.edu.pk");
+};
+
+// function to upload the file to cloudinary
+exports.uploadFile = async (file) => {
+  const response = await cloudinary.uploader.upload(file.tempFilePath, {
+    folder: process.env.CLOUDINARY_FOLDER_NAME,
+    quality: 60,
+    resource_type: "auto",
+  });
+  return response.secure_url;
 };
