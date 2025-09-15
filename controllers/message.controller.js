@@ -34,16 +34,18 @@ exports.sendMessage = async (req, res) => {
     // array to store the links of the uploaded media
     const secureURLs = [];
 
-    if (Array.isArray(files)) {
-      for (const file of files) {
-        const response = await uploadFile(file);
+    if (files && Array.isArray(files)) {
+      if (Array.isArray(files)) {
+        for (const file of files) {
+          const response = await uploadFile(file);
+
+          secureURLs.push(response);
+        }
+      } else {
+        const response = await uploadFile(files);
 
         secureURLs.push(response);
       }
-    } else {
-      const response = await uploadFile(files);
-
-      secureURLs.push(response);
     }
 
     // store the message into the database
@@ -67,6 +69,44 @@ exports.sendMessage = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
+    });
+  }
+};
+
+// getMessages controller function
+exports.getMessages = async (req, res) => {
+  // get the groupID from the req.params
+  const groupID = req.params.id;
+
+  try {
+    // validation
+    if (!groupID) {
+      return res.status(400).json({
+        success: false,
+        message: "Group ID is missing",
+      });
+    }
+
+    // get all the messages from the database
+    const messages = await Message.find({ group: groupID }).populate(
+      "sender",
+      "-password"
+    );
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      messages,
+      message: "Messages fetched successfully",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the get messages controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Interanl server error",
     });
   }
 };
