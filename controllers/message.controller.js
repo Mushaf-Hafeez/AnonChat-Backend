@@ -16,7 +16,7 @@ exports.sendMessage = async (req, res) => {
   //   get the data from the req
   const content = req.body?.message;
 
-  const files = req?.files?.files;
+  const files = req?.files?.attachment;
 
   try {
     // validation
@@ -34,7 +34,7 @@ exports.sendMessage = async (req, res) => {
     // array to store the links of the uploaded media
     const secureURLs = [];
 
-    if (files && Array.isArray(files)) {
+    if (files) {
       if (Array.isArray(files)) {
         for (const file of files) {
           const response = await uploadFile(file);
