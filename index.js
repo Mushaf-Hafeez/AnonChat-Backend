@@ -1,5 +1,7 @@
 const express = require("express");
-const app = express();
+// const app = express();
+
+const { app, server } = require("./config/socket");
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -57,6 +59,6 @@ app.get("/", (req, res) => {
 });
 
 // listen to the server
-app.listen(PORT, () =>
+server.listen(PORT, () =>
   console.log(`server is running at http://localhost:${PORT}`)
 );
