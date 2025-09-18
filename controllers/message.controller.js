@@ -1,6 +1,7 @@
-const { response } = require("express");
 const Message = require("../models/message.model");
 const User = require("../models/user.model");
+
+const { io } = require("../config/socket");
 
 // importing helper function
 const { uploadFile } = require("../utils/util");
@@ -49,12 +50,15 @@ exports.sendMessage = async (req, res) => {
     }
 
     // store the message into the database
-    await Message.create({
+    const message = await Message.create({
       sender,
       group,
       content,
       attachment: secureURLs,
     });
+
+    // send the message to all the groupMember
+    io.to(group).emit("receive-message", message);
 
     // return the success response
     return res.status(200).json({
