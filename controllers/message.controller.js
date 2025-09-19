@@ -50,12 +50,17 @@ exports.sendMessage = async (req, res) => {
     }
 
     // store the message into the database
-    const message = await Message.create({
+    let message = await Message.create({
       sender,
       group,
       content,
       attachment: secureURLs,
     });
+
+    await message.populate("sender group");
+
+    message = message.toObject();
+    delete message.sender.password;
 
     // send the message to all the groupMember
     io.to(group).emit("receive-message", message);
