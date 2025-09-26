@@ -63,7 +63,7 @@ exports.sendMessage = async (req, res) => {
     delete message.sender.password;
 
     // send the message to all the groupMember
-    io.to(group).emit("receive-message", message);
+    io.to(group).emit("new-message", message);
 
     // return the success response
     return res.status(200).json({
