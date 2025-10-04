@@ -63,8 +63,19 @@ exports.sendMessage = async (req, res) => {
     message = message.toObject();
     delete message.sender.password;
 
+    const user = await User.findById({ _id: sender });
+
+    user.joinedGroups = user.joinedGroups.filter((groupId) => groupId != group);
+
+    user.joinedGroups.unshift(group);
+
+    await user.save();
+
     // send the message to all the groupMember
-    io.to(group).emit("new-message", message);
+    io.to(group).emit("new-message", {
+      message,
+      joinedGroups: user.joinedGroups,
+    });
 
     // return the success response
     return res.status(200).json({
@@ -155,7 +166,10 @@ exports.deleteMessage = async (req, res) => {
       await Message.findByIdAndDelete({ _id: messageId });
 
       // delete the message using sockets in realtime
-      io.to(groupId).emit("delete-message", { messageId, groupId });
+      io.to(groupId).emit("delete-message", {
+        messageId,
+        groupId,
+      });
 
       // return the success response
       return res.status(200).json({
