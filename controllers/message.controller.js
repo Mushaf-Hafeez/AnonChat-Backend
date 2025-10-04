@@ -155,6 +155,7 @@ exports.deleteMessage = async (req, res) => {
       await Message.findByIdAndDelete({ _id: messageId });
 
       // delete the message using sockets in realtime
+      io.to(groupId).emit("delete-message", { messageId, groupId });
 
       // return the success response
       return res.status(200).json({
