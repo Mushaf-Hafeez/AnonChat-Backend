@@ -5,6 +5,7 @@ const { io } = require("../config/socket");
 
 // importing helper function
 const { uploadFile } = require("../utils/util");
+const { resolveHostname } = require("nodemailer/lib/shared");
 
 // sendMessage controller function
 exports.sendMessage = async (req, res) => {
@@ -116,6 +117,61 @@ exports.getMessages = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Interanl server error",
+    });
+  }
+};
+
+// deleteMessage controller function
+exports.deleteMessage = async (req, res) => {
+  // get the messageId and groupId from the req params
+  const { messageId, groupId } = req.params;
+
+  // get the user role from the req.user
+  const { id, role } = req.user;
+
+  try {
+    // validation
+    if (!messageId || !groupId) {
+      return res.status(400).json({
+        success: false,
+        message: "Group ID or Message ID is missing",
+      });
+    }
+
+    const message = await Message.findById({
+      _id: messageId,
+    });
+
+    // return if no message found
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: "Message not found",
+      });
+    }
+
+    // if the user is the sender or CR/GR of the group then he can delete the message
+    if (message.sender == id || role === "CR" || role === "GR") {
+      await Message.findByIdAndDelete({ _id: messageId });
+
+      // delete the message using sockets in realtime
+
+      // return the success response
+      return res.status(200).json({
+        success: true,
+        message: "Message has been deleted successfully",
+      });
+    }
+
+    res.end();
+  } catch (error) {
+    console.log(
+      "Error in the delete message controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };

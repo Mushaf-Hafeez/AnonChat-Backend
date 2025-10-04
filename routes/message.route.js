@@ -11,6 +11,6 @@ const {
 
 messageRoutes.get("/messages/:id", isAuth, getMessages);
 messageRoutes.post("/send/:id", isAuth, sendMessage);
-messageRoutes.delete("/delete/:id", isAuth, deleteMessage);
+messageRoutes.delete("/delete/:groupId/:messageId", isAuth, deleteMessage);
 
 module.exports = messageRoutes;
