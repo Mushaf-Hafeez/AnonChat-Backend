@@ -13,8 +13,10 @@ const {
   addMember,
   removeMember,
   leaveGroup,
+  group,
 } = require("../controllers/group.controller");
 
+groupRoutes.get("/", isAuth, group);
 groupRoutes.get("/details/:id", isAuth, getGroupDetails);
 groupRoutes.post("/create", isAuth, isGroupAdmin, createGroup);
 groupRoutes.put("/update/:id", isAuth, isGroupAdmin, updateGroup);

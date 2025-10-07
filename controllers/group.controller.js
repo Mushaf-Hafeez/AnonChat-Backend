@@ -1,6 +1,55 @@
 const Group = require("../models/group.model");
 const User = require("../models/user.model");
 
+// get the group for the name
+exports.group = async (req, res) => {
+  // get the section and semester from the req.params
+  const groupName = req.query.groupName;
+  const { semester, section } = req.user;\
+
+  // Todo: Need to fix why the data is not fetched using groupName
+
+  try {
+    // validation
+    if (!groupName) {
+      return res.status(400).json({
+        success: false,
+        message: "Group name is missing",
+      });
+    }
+
+    // find the group with the section and semester
+    const groups = await Group.find({
+      groupName,
+      semester,
+      section,
+    });
+
+    if (!groups || groups.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Group not found",
+      });
+    }
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      groups,
+      message: "Groups fetched",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the get all groups controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 // create group controller function
 exports.createGroup = async (req, res) => {
   // get the data from the req
