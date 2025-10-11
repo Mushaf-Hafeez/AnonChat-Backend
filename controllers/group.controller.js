@@ -3,11 +3,8 @@ const User = require("../models/user.model");
 
 // get the group for the name
 exports.group = async (req, res) => {
-  // get the section and semester from the req.params
   const groupName = req.query.groupName;
-  const { semester, section } = req.user;\
-
-  // Todo: Need to fix why the data is not fetched using groupName
+  const { semester, section } = req.user;
 
   try {
     // validation
