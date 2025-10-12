@@ -104,6 +104,7 @@ exports.signup = async (req, res) => {
     // role,
     section,
     semester,
+    department,
     otp,
   } = req.body;
 
@@ -116,6 +117,7 @@ exports.signup = async (req, res) => {
       !password ||
       !confirmPassword ||
       !section ||
+      !department ||
       !semester
     ) {
       return res.status(400).json({
@@ -203,6 +205,7 @@ exports.signup = async (req, res) => {
       role,
       section,
       semester,
+      department,
     });
 
     user = user.toObject();
@@ -217,6 +220,7 @@ exports.signup = async (req, res) => {
       role: user.role,
       section: user.section,
       semester: user.semester,
+      department: user.department,
     };
 
     // generate token and cookie
@@ -309,6 +313,7 @@ exports.login = async (req, res) => {
       role: doesExist.role,
       section: doesExist.section,
       semester: doesExist.semester,
+      department: doesExist.department,
     };
 
     // generate a token
