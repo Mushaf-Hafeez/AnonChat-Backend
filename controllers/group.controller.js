@@ -4,7 +4,7 @@ const User = require("../models/user.model");
 // get the group for the name
 exports.group = async (req, res) => {
   const groupName = req.query.groupName;
-  const { semester, section } = req.user;
+  const { semester, section, department } = req.user;
 
   try {
     // validation
@@ -20,6 +20,7 @@ exports.group = async (req, res) => {
       groupName,
       semester,
       section,
+      department,
     });
 
     if (!groups) {
@@ -50,11 +51,11 @@ exports.group = async (req, res) => {
 // create group controller function
 exports.createGroup = async (req, res) => {
   // get the data from the req
-  const { groupName, description, section, semester } = req.body;
+  const { groupName, description, section, semester, department } = req.body;
 
   try {
     // validation
-    if (!groupName || !section || !semester) {
+    if (!groupName || !section || !semester || !department) {
       return res.status(400).json({
         success: false,
         message: "All the fields are required",
@@ -63,16 +64,25 @@ exports.createGroup = async (req, res) => {
 
     // return if the semeter and section of the admin are not same because admin cannot create a group for another section or semester
 
-    if (req.user.section !== section || req.user.semester !== semester) {
+    if (
+      req.user.section !== section ||
+      req.user.semester !== semester ||
+      req.user.department !== department
+    ) {
       return res.status(400).json({
         success: false,
         message:
-          "You are not authorized to create group for another section/semester",
+          "You are not authorized to create group for another section/semester/department",
       });
     }
 
     // return if the group already exists with the same name, semester and section
-    const doesExist = await Group.findOne({ groupName, section, semester });
+    const doesExist = await Group.findOne({
+      groupName,
+      section,
+      semester,
+      department,
+    });
 
     if (doesExist) {
       return res.status(400).json({
@@ -82,7 +92,9 @@ exports.createGroup = async (req, res) => {
     }
 
     // fetch the users from the database with section and semester
-    const members = await User.find({ section, semester }).select("_id");
+    const members = await User.find({ section, semester, department }).select(
+      "_id"
+    );
 
     // create a group and add the id in the admin's document
     const group = await Group.create({
@@ -90,19 +102,20 @@ exports.createGroup = async (req, res) => {
       description,
       section,
       semester,
+      department,
       members,
       createdBy: req.user.id,
     });
 
     await User.updateMany(
-      { section, semester, role: { $ne: "STUDENT" } },
+      { section, semester, department, role: { $ne: "STUDENT" } },
       {
         $push: { myGroups: group._id },
       }
     );
 
     await User.updateMany(
-      { section, semester },
+      { section, semester, department },
       { $push: { joinedGroups: group._id } }
     );
 
