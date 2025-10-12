@@ -44,6 +44,7 @@ exports.isAuth = async (req, res, next) => {
           role: decode.role,
           section: decode.section,
           semester: decode.semester,
+          department: decode.department,
         };
       }
 
