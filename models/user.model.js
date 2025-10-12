@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema(
       default: "1st",
       required: true,
     },
+    department: {
+      type: String,
+      required: true,
+    },
     resetPasswordToken: {
       type: String,
     },
