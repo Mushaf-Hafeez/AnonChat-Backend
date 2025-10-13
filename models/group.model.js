@@ -34,6 +34,12 @@ const groupSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    requests: [
+      {
+        type: mongoose.Schema.types.ObjectId,
+        reg: "User",
+      },
+    ],
     isActive: {
       type: Boolean,
       default: true,
