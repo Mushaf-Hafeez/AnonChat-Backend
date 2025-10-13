@@ -14,6 +14,7 @@ const {
   removeMember,
   leaveGroup,
   group,
+  joinGroupRequest,
 } = require("../controllers/group.controller");
 
 groupRoutes.get("/", isAuth, group);
@@ -23,6 +24,7 @@ groupRoutes.put("/update/:id", isAuth, isGroupAdmin, updateGroup);
 groupRoutes.delete("/delete/:id", isAuth, isGroupAdmin, deleteGroup);
 groupRoutes.put("/add/:id", isAuth, isGroupAdmin, addMember);
 groupRoutes.delete("/remove/:id", isAuth, isGroupAdmin, removeMember);
+groupRoutes.post("/join/:id", isAuth, joinGroupRequest);
 groupRoutes.delete("/leave/:id", isAuth, leaveGroup);
 
 module.exports = groupRoutes;
