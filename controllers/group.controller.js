@@ -450,6 +450,63 @@ exports.getGroupDetails = async (req, res) => {
   }
 };
 
+// joinGroupRequest controller function
+exports.joinGroupRequest = async (req, res) => {
+  // get the groupId from the req.params
+  const groupId = req.params.id;
+
+  // get the user Id from the req.user
+  const userId = req.user.id;
+
+  try {
+    // validation
+    if (!groupId) {
+      return res.status(400).json({
+        success: false,
+        message: "Group ID is missing",
+      });
+    }
+
+    // find the group with this groupId
+    let group = await Group.findById(groupId);
+
+    // return if no group found
+    if (!group) {
+      return res.status(404).json({
+        success: false,
+        message: "No group found",
+      });
+    }
+
+    // check if the userId already exists in the group.requests
+    const doesExist = group.requests.find((id) => id == userId);
+
+    if (doesExist) {
+      return res.status(400).json({
+        success: false,
+        message: "User already requested to join this group",
+      });
+    }
+
+    group.requests.push(userId);
+    await group.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Request sent",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the join group request controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 // leaveGroup controller function
 exports.leaveGroup = async (req, res) => {
   // get the group ID from the req.params

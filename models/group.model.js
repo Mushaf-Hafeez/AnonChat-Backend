@@ -36,8 +36,8 @@ const groupSchema = new mongoose.Schema(
     },
     requests: [
       {
-        type: mongoose.Schema.types.ObjectId,
-        reg: "User",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
       },
     ],
     isActive: {
