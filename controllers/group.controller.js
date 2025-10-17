@@ -423,7 +423,10 @@ exports.getGroupDetails = async (req, res) => {
     }
 
     // return if no gorup found with this ID in the database
-    const groupData = await Group.findById(id).populate("members").exec();
+    const groupData = await Group.findById(id)
+      .populate("members", "-password")
+      .populate("requests", "-password")
+      .exec();
 
     if (!groupData) {
       return res.status(404).json({
