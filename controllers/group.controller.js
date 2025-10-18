@@ -275,31 +275,20 @@ exports.deleteGroup = async (req, res) => {
 
 // addMember controller function
 exports.addMember = async (req, res) => {
-  // get the group ID from the req params
-  const { id } = req.params;
-
-  // get the userIds from the req body
-  const { userIds } = req.body;
+  // get the groupId, userId from the req params
+  const { userId, groupId } = req.params;
 
   try {
     // validation
-    if (!id) {
+    if (!userId || !groupId) {
       return res.status(400).json({
         success: false,
-        message: "Group ID is required",
-      });
-    }
-
-    // validate the userIds
-    if (!Array.isArray(userIds) || userIds.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "User IDs are required",
+        message: "groupId/userId is missing",
       });
     }
 
     // return if no group exists in the database
-    const doesExist = await Group.findById(id);
+    const doesExist = await Group.findById(groupId);
 
     if (!doesExist) {
       return res.status(404).json({
@@ -308,23 +297,18 @@ exports.addMember = async (req, res) => {
       });
     }
 
-    // add userIds in the group => members
-    const updatedGroup = await Group.findByIdAndUpdate(
-      id,
-      { $addToSet: { members: { $each: userIds } } },
-      { new: true }
-    );
+    // remove the userId from the group->requests and add userId in group->members
+    await Group.findByIdAndUpdate(groupId, {
+      $pull: { requests: userId },
+      $push: { members: userId },
+    });
 
-    // add the group ID in each user => joinedGroups
-    await User.updateMany(
-      { _id: { $in: userIds } },
-      { $addToSet: { joinedGroups: id } }
-    );
+    // add the groupId in user->joinedGroups
+    await User.findByIdAndUpdate(userId, { $push: { joinedGroups: groupId } });
 
     // return the success response
     return res.status(200).json({
       success: true,
-      group: updatedGroup,
       message: "added successfully",
     });
   } catch (error) {
