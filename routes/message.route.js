@@ -9,6 +9,7 @@ const {
   deleteMessage,
   reportMessage,
   dismissReportedMessage,
+  deleteReportedMessage,
 } = require("../controllers/message.controller");
 
 messageRoutes.get("/messages/:id", isAuth, getMessages);
@@ -16,10 +17,16 @@ messageRoutes.post("/send/:id", isAuth, sendMessage);
 messageRoutes.delete("/delete/:groupId/:messageId", isAuth, deleteMessage);
 messageRoutes.put("/report/:groupId/:messageId", isAuth, reportMessage);
 messageRoutes.put(
-  "/dsimiss/:groupId/:messageId",
+  "/dismissReportedMessage/:groupId/:messageId",
   isAuth,
   isGroupAdmin,
   dismissReportedMessage
+);
+messageRoutes.put(
+  "/deleteReportedMessage/:groupId/:messageId",
+  isAuth,
+  isGroupAdmin,
+  deleteReportedMessage
 );
 
 module.exports = messageRoutes;
