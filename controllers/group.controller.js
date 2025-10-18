@@ -543,3 +543,45 @@ exports.leaveGroup = async (req, res) => {
     });
   }
 };
+
+// rejectMember controller function
+exports.rejectMember = async (req, res) => {
+  // get the groupId and userId from the req.params
+  const { userId, groupId } = req.params;
+  try {
+    if (!userId || !groupId) {
+      return res.status(400).json({
+        success: false,
+        message: "userId/groupId is missing",
+      });
+    }
+
+    const group = await Group.findById(groupId);
+
+    // return if no group found
+    if (!group) {
+      return res.status(404).json({
+        success: false,
+        message: "Group not found",
+      });
+    }
+
+    // remove the userId from the group.requests
+    await Group.findByIdAndUpdate(groupId, { $pull: { requests: userId } });
+
+    // return success response
+    return res.status(200).json({
+      success: true,
+      message: "Request rejected",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the reject member request controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
