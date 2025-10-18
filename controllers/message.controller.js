@@ -225,3 +225,39 @@ exports.reportMessage = async (req, res) => {
     });
   }
 };
+
+// dismissReportedMessage controller function
+exports.dismissReportedMessage = async (req, res) => {
+  // get the groupId and messageId from req.params
+  const { messageId, groupId } = req.params;
+
+  try {
+    // validation
+    if (!messageId || !groupId) {
+      return res.status(400).json({
+        success: false,
+        message: "messageId/groupId is missing",
+      });
+    }
+
+    // pull the messageId from the group->reportedMessage
+    await Group.findByIdAndUpdate(groupId, {
+      $pull: { reportedMessages: messageId },
+    });
+
+    // send the success response
+    return res.status(200).json({
+      success: true,
+      message: "Successfully dismissed",
+    });
+  } catch (error) {
+    console.log(
+      "Error in the dismiss reported message controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
