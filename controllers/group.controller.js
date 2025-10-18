@@ -426,7 +426,10 @@ exports.getGroupDetails = async (req, res) => {
     const groupData = await Group.findById(id)
       .populate("members", "-password")
       .populate("requests", "-password")
-      .populate("reportedMessages")
+      .populate({
+        path: "reportedMessages",
+        populate: { path: "sender", select: "-password" },
+      })
       .exec();
 
     if (!groupData) {
