@@ -22,7 +22,7 @@ groupRoutes.get("/details/:id", isAuth, getGroupDetails);
 groupRoutes.post("/create", isAuth, isGroupAdmin, createGroup);
 groupRoutes.put("/update/:id", isAuth, isGroupAdmin, updateGroup);
 groupRoutes.delete("/delete/:id", isAuth, isGroupAdmin, deleteGroup);
-groupRoutes.put("/add/:id", isAuth, isGroupAdmin, addMember);
+groupRoutes.put("/add/:groupId/:userId", isAuth, isGroupAdmin, addMember);
 groupRoutes.delete("/remove/:id", isAuth, isGroupAdmin, removeMember);
 groupRoutes.post("/join/:id", isAuth, joinGroupRequest);
 groupRoutes.delete("/leave/:id", isAuth, leaveGroup);
