@@ -1,5 +1,6 @@
 const Message = require("../models/message.model");
 const User = require("../models/user.model");
+const Group = require("../models/group.model");
 
 const { io } = require("../config/socket");
 
@@ -182,6 +183,40 @@ exports.deleteMessage = async (req, res) => {
   } catch (error) {
     console.log(
       "Error in the delete message controller function: ",
+      error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+// reportMessage controller function
+exports.reportMessage = async (req, res) => {
+  // get the groupId and messageId from the req.params
+  const { groupId, messageId } = req.params;
+
+  try {
+    if (!groupId || !messageId) {
+      return res.status(400).json({
+        success: false,
+        message: "groupId/messageId is missing",
+      });
+    }
+
+    // find the update the group by add the reported message ID in the group.reportedMessages
+    await Group.findByIdAndUpdate(groupId, {
+      $addToSet: { reportedMessages: messageId },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Message has been reported",
+    });
+  } catch (error) {
+    console.log(
+      "Errror in the report message controller function: ",
       error.message
     );
     return res.status(500).json({
