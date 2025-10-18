@@ -426,6 +426,7 @@ exports.getGroupDetails = async (req, res) => {
     const groupData = await Group.findById(id)
       .populate("members", "-password")
       .populate("requests", "-password")
+      .populate("reportedMessages")
       .exec();
 
     if (!groupData) {
