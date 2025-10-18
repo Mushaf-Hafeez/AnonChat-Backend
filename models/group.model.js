@@ -40,6 +40,12 @@ const groupSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    reportedMessages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Message",
+      },
+    ],
     isActive: {
       type: Boolean,
       default: true,
