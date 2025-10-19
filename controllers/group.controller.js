@@ -252,7 +252,7 @@ exports.deleteGroup = async (req, res) => {
     await Message.deleteMany({ group: id });
 
     // delete the id from user=> myGroups
-    await user.updateMany({ myGroups: id }, { $pull: { myGroups: id } });
+    await User.updateMany({ myGroups: id }, { $pull: { myGroups: id } });
 
     // delete the ID from the each joined member
     await User.updateMany(
