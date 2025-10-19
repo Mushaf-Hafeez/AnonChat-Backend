@@ -173,8 +173,10 @@ exports.updateGroup = async (req, res) => {
       });
     }
 
+    const user = await User.findById(req.user.id);
+
     // reutrn if the user is not the admin of the group
-    if (req.user.id != doesExist.createdBy) {
+    if (!user.myGroups.includes(id)) {
       return res.status(401).json({
         success: false,
         message: "You are not authorized",
