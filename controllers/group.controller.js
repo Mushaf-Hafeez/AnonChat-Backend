@@ -1,5 +1,6 @@
 const Group = require("../models/group.model");
 const User = require("../models/user.model");
+const Message = require("../models/message.model");
 
 // get the group for the name
 exports.group = async (req, res) => {
@@ -235,7 +236,7 @@ exports.deleteGroup = async (req, res) => {
     // check if the user is the admin of the group
     const user = await User.findById(req.user.id);
 
-    const isAuthorized = user.myGroups.find((group) => group == id);
+    const isAuthorized = user.myGroups.findIndex((group) => group == id);
 
     if (isAuthorized === -1) {
       return res.status(401).json({
@@ -246,6 +247,9 @@ exports.deleteGroup = async (req, res) => {
 
     // delete the group
     await doesExist.deleteOne();
+
+    // delete all the messages of this group
+    await Message.deleteMany({ group: id });
 
     // delete the id from user=> myGroups
     await user.updateMany({ myGroups: id }, { $pull: { myGroups: id } });
