@@ -64,18 +64,9 @@ exports.sendMessage = async (req, res) => {
     message = message.toObject();
     delete message.sender.password;
 
-    const user = await User.findById({ _id: sender });
-
-    user.joinedGroups = user.joinedGroups.filter((groupId) => groupId != group);
-
-    user.joinedGroups.unshift(group);
-
-    await user.save();
-
     // send the message to all the groupMember
     io.to(group).emit("new-message", {
       message,
-      joinedGroups: user.joinedGroups,
     });
 
     // return the success response
