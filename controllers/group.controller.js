@@ -196,6 +196,7 @@ exports.updateGroup = async (req, res) => {
 
     // edit in realtime
     io.to(id).emit("update-group", {
+      id,
       groupName,
       description,
     });
