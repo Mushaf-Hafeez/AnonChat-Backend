@@ -473,6 +473,7 @@ exports.joinGroupRequest = async (req, res) => {
 
     // find the group with this groupId
     let group = await Group.findById(groupId);
+    const user = await User.findById(userId);
 
     // return if no group found
     if (!group) {
@@ -494,6 +495,12 @@ exports.joinGroupRequest = async (req, res) => {
 
     group.requests.push(userId);
     await group.save();
+
+    // send the join-group request in realtime
+    io.to(groupId).emit("join-request", {
+      groupId,
+      user,
+    });
 
     return res.status(200).json({
       success: true,
