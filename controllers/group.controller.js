@@ -263,6 +263,9 @@ exports.deleteGroup = async (req, res) => {
       { $pull: { joinedGroups: id } }
     );
 
+    // delete group in realtime
+    io.to(id).emit("delete-group", id);
+
     // return the success response
     return res.status(200).json({
       success: true,
