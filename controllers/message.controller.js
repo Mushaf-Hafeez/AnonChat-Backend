@@ -6,7 +6,6 @@ const { io } = require("../config/socket");
 
 // importing helper function
 const { uploadFile } = require("../utils/util");
-const { resolveHostname } = require("nodemailer/lib/shared");
 
 // sendMessage controller function
 exports.sendMessage = async (req, res) => {
@@ -167,8 +166,6 @@ exports.deleteMessage = async (req, res) => {
         message: "Message has been deleted successfully",
       });
     }
-
-    res.end();
   } catch (error) {
     console.log(
       "Error in the delete message controller function: ",
@@ -271,6 +268,12 @@ exports.deleteReportedMessage = async (req, res) => {
     // remove the messageId from the group->reportedMessages
     await Group.findByIdAndUpdate(groupId, {
       $pull: { reportedMessages: messageId },
+    });
+
+    // delete the message using sockets in realtime
+    io.to(groupId).emit("delete-message", {
+      messageId,
+      groupId,
     });
 
     // return success response
