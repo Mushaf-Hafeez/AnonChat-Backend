@@ -191,10 +191,18 @@ exports.reportMessage = async (req, res) => {
       });
     }
 
+    // find message from the database
+    const message = await Message.findById(messageId)
+      .populate("sender", "-password")
+      .exec();
+
     // find the update the group by add the reported message ID in the group.reportedMessages
     await Group.findByIdAndUpdate(groupId, {
       $addToSet: { reportedMessages: messageId },
     });
+
+    // send the report-message in realtime
+    io.to(groupId).emit("report-message", message);
 
     return res.status(200).json({
       success: true,
