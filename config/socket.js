@@ -15,7 +15,16 @@ const io = new Server(server, {
   },
 });
 
+const users = {};
+
 io.on("connection", (socket) => {
+  // store userId in users
+  socket.on("userId", (userId) => {
+    users[userId] = socket.id;
+    // store it in socket obj
+    socket.userId = userId;
+  });
+
   // join room event
   socket.on("join-room", (roomIDs) => {
     for (const roomID of roomIDs) {
@@ -25,7 +34,10 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("User disconnected: ", socket.id);
+    if (socket.userId && users[socket.userId]) {
+      delete users[socket.userId];
+    }
   });
 });
 
-module.exports = { app, server, io };
+module.exports = { app, server, io, users };

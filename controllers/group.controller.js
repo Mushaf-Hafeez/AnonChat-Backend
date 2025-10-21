@@ -1,6 +1,7 @@
 const Group = require("../models/group.model");
 const User = require("../models/user.model");
 const Message = require("../models/message.model");
+const { io, users } = require("../config/socket");
 
 // get the group for the name
 exports.group = async (req, res) => {
@@ -312,6 +313,9 @@ exports.addMember = async (req, res) => {
     // add the groupId in user->joinedGroups
     await User.findByIdAndUpdate(userId, { $push: { joinedGroups: groupId } });
 
+    // add member to the group in realtime
+    io.to(users[userId]).emit("add-member", doesExist);
+
     // return the success response
     return res.status(200).json({
       success: true,
@@ -380,6 +384,9 @@ exports.removeMember = async (req, res) => {
 
     // remove the group ID from the user's -> joinedGroups
     await User.findByIdAndUpdate(userId, { $pull: { joinedGroups: id } });
+
+    // remove the member from the group in realtime
+    io.to(users[userId]).emit("remove-member", id);
 
     // return the success response
     return res.status(200).json({
