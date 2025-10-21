@@ -194,6 +194,12 @@ exports.updateGroup = async (req, res) => {
       { new: true }
     );
 
+    // edit in realtime
+    io.to(id).emit("update-group", {
+      groupName,
+      description,
+    });
+
     // return the success response
     return res.status(200).json({
       success: true,
