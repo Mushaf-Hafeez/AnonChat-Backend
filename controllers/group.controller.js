@@ -589,6 +589,11 @@ exports.rejectMember = async (req, res) => {
     // remove the userId from the group.requests
     await Group.findByIdAndUpdate(groupId, { $pull: { requests: userId } });
 
+    // send the reject message in realtime
+    io.to(users[userId]).emit("reject-request", {
+      message: `Your request to join \"${group.groupName}\" has been rejected.`,
+    });
+
     // return success response
     return res.status(200).json({
       success: true,
