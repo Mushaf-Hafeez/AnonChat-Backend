@@ -44,12 +44,12 @@ exports.sendOTP = async (req, res) => {
     // uncomment this code after testing
     // =========================================================================================
 
-    // if (!isValidEmail(email)) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Please use university email",
-    //   });
-    // }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please use university email",
+      });
+    }
 
     // return if the user already exists with this mail
     const doesExist = await User.findOne({ email });
@@ -139,12 +139,12 @@ exports.signup = async (req, res) => {
     // uncomment this code after testing
     // =========================================================================================
 
-    // if (!isValidEmail(email)) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     messag: "Please use university email",
-    //   });
-    // }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        messag: "Please use university email",
+      });
+    }
 
     // return if the user already exits in the database
     const doesExist = await User.findOne({ email });
@@ -279,12 +279,12 @@ exports.login = async (req, res) => {
     // uncomment this code after testing
     // =========================================================================================
 
-    // if (!isValidEmail(email)) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     messag: "Please use university email",
-    //   });
-    // }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        messag: "Please use university email",
+      });
+    }
 
     // return if the user does not exists in the database
     let doesExist = await User.findOne({ email }).populate("joinedGroups");
@@ -357,12 +357,12 @@ exports.forgotPassword = async (req, res) => {
     // uncomment this code after testing
     // =========================================================================================
 
-    // if (!isValidEmail(email)) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Invalid email",
-    //   });
-    // }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email",
+      });
+    }
 
     // return if the user does not exists in the database
     const doesExist = await User.findOne({ email });

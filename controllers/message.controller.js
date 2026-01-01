@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const Message = require("../models/message.model");
 const User = require("../models/user.model");
 const Group = require("../models/group.model");
@@ -97,11 +99,10 @@ exports.getMessages = async (req, res) => {
       });
     }
 
-    // get all the messages from the database
-    const messages = await Message.find({ group: groupID }).populate(
-      "sender",
-      "-password"
-    );
+    const messages = await Message.find({ group: groupID }).populate({
+      path: ["sender", "group"],
+      select: "-password",
+    });
 
     // return the success response
     return res.status(200).json({
@@ -182,6 +183,8 @@ exports.deleteMessage = async (req, res) => {
 exports.reportMessage = async (req, res) => {
   // get the groupId and messageId from the req.params
   const { groupId, messageId } = req.params;
+
+  console.log("groupId: ", groupId);
 
   try {
     if (!groupId || !messageId) {
