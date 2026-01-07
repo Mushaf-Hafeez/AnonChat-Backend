@@ -6,6 +6,8 @@ const { app, server } = require("./config/socket");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const expressFileUpload = require("express-fileupload");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 const connectDB = require("./config/database.config");
 const connectToCloudinary = require("./config/cloudinary.config");
@@ -33,6 +35,21 @@ app.use(
   expressFileUpload({
     useTempFiles: true,
     tempFileDir: "/tmp/",
+  })
+);
+
+// security middleware
+app.use(helmet());
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 300,
+    message: {
+      success: false,
+      message: "Too many requests, please try again later.",
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
   })
 );
 
