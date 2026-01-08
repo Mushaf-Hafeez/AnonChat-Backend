@@ -18,7 +18,7 @@ const io = new Server(server, {
 const users = {};
 
 io.on("connection", (socket) => {
-  console.log(`A new user joined: ${socket.id}`);
+  // console.log(`A new user joined: ${socket.id}`);
 
   // store userId in users
   socket.on("userId", (userId) => {
@@ -31,13 +31,13 @@ io.on("connection", (socket) => {
   socket.on("join-room", (roomIDs) => {
     for (const roomID of roomIDs) {
       socket.join(roomID._id);
-      console.log(`user ${socket.id} joined ${roomID._id}`);
+      // console.log(`user ${socket.id} joined ${roomID._id}`);
     }
   });
 
   // socket disconnect event
   socket.on("disconnect", () => {
-    console.log("User disconnected: ", socket.id);
+    // console.log("User disconnected: ", socket.id);
     if (socket.userId && users[socket.userId]) {
       delete users[socket.userId];
     }
